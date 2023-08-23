@@ -25,83 +25,84 @@ import com.google.firebase.database.FirebaseDatabase;
 public class SignUp extends AppCompatActivity {
 
 
-     Button button;
-     Button buttonRegister;
+    Button button;
+    Button buttonRegister;
 
-     EditText editTextEmail, editTextPassword;
-
-      TextView textView;
-
-      ProgressBar progressBar;
-
-      FirebaseAuth mAuth;
-
-
-      ActivitySignUpBinding binding;
-      String firstName, lastName,email,password;
-      FirebaseDatabase db;
-      DatabaseReference reference;
+    EditText editTextEmail, editTextPassword;
+    TextView textView, enterFirstname,enterLastName;
+    ProgressBar progressBar;
+    FirebaseAuth mAuth;
+    ActivitySignUpBinding binding;
 
 
 
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        button = findViewById(R.id.registerButton);
+//        button = findViewById(R.id.registerButton);
         mAuth = FirebaseAuth.getInstance();
         progressBar= findViewById(R.id.progressBar);
         editTextEmail = findViewById(R.id.Email);
         editTextPassword = findViewById(R.id.Password);
+        enterFirstname = findViewById(R.id.enterFirstName);
+        enterLastName = findViewById(R.id.enterLastName);
         textView = findViewById(R.id.loginNow);
         buttonRegister =  findViewById(R.id.registerButton);
 
-          binding.registerButton.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View view) {
-                  firstName= binding.enterFirstName.getText().toString();
-                  lastName = binding.enterLastName.getText().toString();
-                  email = binding.Email.getText().toString();
-                  password =binding.Password.getText().toString();
-
-               if(!firstName.isEmpty() && !lastName.isEmpty() && !email.isEmpty()&& !password.isEmpty() ){
-
-
-                   Users users = new Users(firstName,lastName,email,password);
-                   db= FirebaseDatabase.getInstance();
-                   reference = db.getReference("Users");
-                   reference.child(password).setValue(users).addOnCompleteListener(new OnCompleteListener<Void>() {
-                       @Override
-                       public void onComplete(@NonNull Task<Void> task) {
-
-                           binding.enterFirstName.setText("");
-                           binding.enterLastName.setText("");
-                           binding.Email.setText("");
-                           binding.Password.setText("");
-                           Toast.makeText(SignUp.this, "Successfully Updated",Toast.LENGTH_SHORT ).show();
+        //adding an onClickListener to button
+//        buttonRegister.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                addUsers();
+//
+//
+//            }
+//
+//
+//        });
 
 
-                       }
-                   });
-               }
 
-              }
-          });
+
+
+
+//          binding.registerButton.setOnClickListener(new View.OnClickListener() {
+//              @Override
+//              public void onClick(View view) {
+//                  firstName= binding.enterFirstName.getText().toString();
+//                  lastName = binding.enterLastName.getText().toString();
+//                  email = binding.Email.getText().toString();
+//                  password =binding.Password.getText().toString();
+//
+//               if(!firstName.isEmpty() && !lastName.isEmpty() && !email.isEmpty()&& !password.isEmpty() ){
+//
+//
+//                   Users users = new Users(firstName,lastName,email,password);
+//                   db= FirebaseDatabase.getInstance();
+//                   reference = db.getReference("Users");
+//                   reference.child(password).setValue(users).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                       @Override
+//                       public void onComplete(@NonNull Task<Void> task) {
+//
+//                           binding.enterFirstName.setText("");
+//                           binding.enterLastName.setText("");
+//                           binding.Email.setText("");
+//                           binding.Password.setText("");
+//                           Toast.makeText(SignUp.this, "Successfully Updated",Toast.LENGTH_SHORT ).show();
+//
+//
+//                       }
+//                   });
+//               }
+//
+//              }
+//          });
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,31 +113,34 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
 
-       // button.setOnClickListener(new View.OnClickListener() {
-       //     @Override
-       //     public void onClick(View view) {
-       //         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-         //       startActivity(intent);
+        // button.setOnClickListener(new View.OnClickListener() {
+        //     @Override
+        //     public void onClick(View view) {
+        //         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        //       startActivity(intent);
         //        finish();
         //    }
-      //  });
+        //  });
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
-                String email, password;
-                email = String.valueOf(editTextEmail.getText().toString());
-                password= String.valueOf(editTextPassword.getText().toString());
+                String email, password ,firstName, lastName;
+                email = editTextEmail.getText().toString();
+                password= editTextPassword.getText().toString();
+                firstName = enterFirstname.getText().toString().trim();
+                lastName = enterLastName.getText().toString().trim();
+
 
                 if(TextUtils.isEmpty(email)){
 
@@ -149,28 +153,36 @@ public class SignUp extends AppCompatActivity {
                     Toast.makeText(SignUp.this, "Enter Password", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);
-                                if (task.isSuccessful()) {
 
-                                    Toast.makeText(SignUp.this, "Account created.",
-                                            Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                else {
+                    addUsers(firstName,lastName,email,password);
 
-                                } else {
-                                    // If sign in fails, display a message to the user.
+                    mAuth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    progressBar.setVisibility(View.GONE);
+                                    if (task.isSuccessful()) {
+//                                    addUsers();
 
-                                    Toast.makeText(SignUp.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(SignUp.this, "Account created.",
+                                                Toast.LENGTH_SHORT).show();
 
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+
+                                    } else {
+                                        // If sign in fails, display a message to the user.
+
+                                        Toast.makeText(SignUp.this, "Authentication failed.",
+                                                Toast.LENGTH_SHORT).show();
+
+                                    }
                                 }
-                            }
-                        });
+                            });
+
+                }
             }
         });
 
@@ -178,5 +190,28 @@ public class SignUp extends AppCompatActivity {
 
 
 
-        };
+    };
+
+    private void addUsers(String firstName, String lastName, String email, String password){
+
+
+
+        if(!TextUtils.isEmpty(firstName)){
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("Users");
+            //String id = databaseUsers.push().getKey();
+
+            Users users = new Users(firstName,lastName,email,password);
+
+            myRef.child(firstName).setValue(users);
+
+            enterFirstname.setText("");
+
+            Toast.makeText(this,"User added", Toast.LENGTH_LONG).show();
+        }
+        else {
+            //if the value is not given displaying a toast
+            Toast.makeText(this, "Please enter a name", Toast.LENGTH_LONG).show();
+        }
     }
+}
